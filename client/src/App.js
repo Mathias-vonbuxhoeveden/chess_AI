@@ -18,7 +18,13 @@ function App() {
 
 function makeRandomMove() {
 
-   fetch('/members')
+   fetch('/members',  {
+      method: 'POST', // or 'PUT'
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(game.fen()),
+    })
   .then((response) => response.json())
   .then((actualData) => {
     safeGameMutate((game) => {
