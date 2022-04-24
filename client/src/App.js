@@ -1,12 +1,15 @@
+import { useRef, useState } from 'react';
+import {Chess} from 'chess.js';
 
-import { useState, useEffect } from 'react';
 import { Chessboard } from 'react-chessboard';
-import { Chess } from 'chess.js';
-function App() {
+
+export default function PlayVsRandom({ boardWidth }) {
+  const chessboardRef = useRef();
   const [game, setGame] = useState(new Chess());
+  const [arrows, setArrows] = useState([]);
+  const [boardOrientation, setBoardOrientation] = useState('white');
+  const [currentTimeout, setCurrentTimeout] = useState(undefined);
 
-
-// perform modify function on game state
   function safeGameMutate(modify) {
     setGame((g) => {
       const update = { ...g };
@@ -15,47 +18,104 @@ function App() {
     });
   }
 
+  function makeRandomMove() {
 
-function makeRandomMove() {
+     fetch('/members',  {
+        method: 'POST', // or 'PUT'
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(game.fen()),
+      })
+    .then((response) => response.json())
+    .then((actualData) => {
+      safeGameMutate((game) => {
+           game.move(actualData);
+         });
 
-   fetch('/members',  {
-      method: 'POST', // or 'PUT'
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(game.fen()),
+
     })
-  .then((response) => response.json())
-  .then((actualData) => {
-    safeGameMutate((game) => {
-         game.move(actualData);
-       });
 
 
-  })
+   }
 
-
- }
-
-// perform action when piece dropped by user
   function onDrop(sourceSquare, targetSquare) {
-    // attempt move
-    let move = null;
-    safeGameMutate((game) => {
-      move = game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: 'q'
-      });
+    const gameCopy = { ...game };
+    const move = gameCopy.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: 'q' // always promote to a queen for example simplicity
     });
+    setGame(gameCopy);
 
-    // illegal move made
+    // illegal move
     if (move === null) return false;
-    // valid move made, make computer move
-    setTimeout(makeRandomMove, 200);
+
+    // store timeout so it can be cleared on undo/reset so computer doesn't execute move
+    const newTimeout = setTimeout(makeRandomMove, 200);
+    setCurrentTimeout(newTimeout);
     return true;
-    console.log(game)
   }
-  return <Chessboard position={game.fen()} onPieceDrop={onDrop} />;
+
+  return (
+    <div>
+      <Chessboard
+        id="PlayVsRandom"
+        animationDuration={200}
+        boardOrientation={boardOrientation}
+        boardWidth={boardWidth}
+        customArrows={arrows}
+        position={game.fen()}
+        onPieceDrop={onDrop}
+        customBoardStyle={{
+          borderRadius: '4px',
+          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
+        }}
+        ref={chessboardRef}
+      />
+      <button
+        className="rc-button"
+        onClick={() => {
+          safeGameMutate((game) => {
+            game.reset();
+          });
+          // stop any current timeouts
+          clearTimeout(currentTimeout);
+        }}
+      >
+        reset
+      </button>
+      <button
+        className="rc-button"
+        onClick={() => {
+          setBoardOrientation((currentOrientation) => (currentOrientation === 'white' ? 'black' : 'white'));
+        }}
+      >
+        flip board
+      </button>
+      <button
+        className="rc-button"
+        onClick={() => {
+          safeGameMutate((game) => {
+            game.undo();
+          });
+          // stop any current timeouts
+          clearTimeout(currentTimeout);
+        }}
+      >
+        undo
+      </button>
+      <button
+        className="rc-button"
+        onClick={() => {
+          setArrows([
+            ['a3', 'a5'],
+            ['g1', 'f3']
+          ]);
+        }}
+      >
+        Set Custom Arrows
+      </button>
+    </div>
+  );
 }
-export default App;
