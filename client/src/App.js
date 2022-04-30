@@ -34,12 +34,10 @@ export default function PlayVsRandom({ boardWidth }) {
          });
 
 
-    })
-
-
-   }
+    })}
 
   function onDrop(sourceSquare, targetSquare) {
+
     const gameCopy = { ...game };
     const move = gameCopy.move({
       from: sourceSquare,
@@ -50,7 +48,6 @@ export default function PlayVsRandom({ boardWidth }) {
 
     // illegal move
     if (move === null) return false;
-
     // store timeout so it can be cleared on undo/reset so computer doesn't execute move
     const newTimeout = setTimeout(makeRandomMove, 200);
     setCurrentTimeout(newTimeout);
@@ -76,11 +73,16 @@ export default function PlayVsRandom({ boardWidth }) {
       <button
         className="rc-button"
         onClick={() => {
+          console.log(game.fen())
           safeGameMutate((game) => {
             game.reset();
           });
           // stop any current timeouts
           clearTimeout(currentTimeout);
+          console.log(game.fen())
+          if (boardOrientation == 'black') {
+            makeRandomMove()
+                                          };
         }}
       >
         reset
@@ -88,7 +90,11 @@ export default function PlayVsRandom({ boardWidth }) {
       <button
         className="rc-button"
         onClick={() => {
-          setBoardOrientation((currentOrientation) => (currentOrientation === 'white' ? 'black' : 'white'));
+
+          setBoardOrientation((currentOrientation) => (currentOrientation === 'white' ? 'black' : 'white'))
+          if (game.fen() == 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' && boardOrientation == 'white') {
+          makeRandomMove()
+                                          };
         }}
       >
         flip board
@@ -105,17 +111,7 @@ export default function PlayVsRandom({ boardWidth }) {
       >
         undo
       </button>
-      <button
-        className="rc-button"
-        onClick={() => {
-          setArrows([
-            ['a3', 'a5'],
-            ['g1', 'f3']
-          ]);
-        }}
-      >
-        Set Custom Arrows
-      </button>
+  
     </div>
   );
 }
