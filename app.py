@@ -1,13 +1,16 @@
 from flask import Flask, request
 from flask import jsonify
+from flask_cors import CORS, cross_origin
 import json
 import chess
 import random
 
 
 app=Flask(__name__,static_folder='client/build',static_url_path='')
+cors = CORS(app)
 
 @app.route("/members", methods = ['POST'])
+@cross_origin()
 def members():
     try:
         data = request.json
@@ -21,6 +24,9 @@ def members():
     except:
         return jsonify("c5")
 
+@app.route('/')
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
 
