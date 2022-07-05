@@ -87,7 +87,7 @@ def main():
 
     print("Starting process!")
     X, y_move_from, y_move_to = [], [], []
-    pgn = open(os.path.join("data", "ficsgamesdb_search_255135.pgn"))
+    pgn = open(os.path.join("data", "ficsgamesdb_search_255149.pgn"))
     while True:
         game = chess.pgn.read_game(pgn)
         if game is None:
@@ -96,12 +96,12 @@ def main():
         for move in game.mainline_moves():
             if board.turn == True:
                 X.append(encode_board_data(board))
-                y_move_from.append(move.from_square)
-                y_move_to.append(move.to_square)
+                y_move_from.append(fetch_from_square(move.from_square))
+                y_move_to.append(fetch_to_square(move.to_square))
             else:
                 X.append(encode_board_data(board.mirror()))
-                y_move_from.append(chess.square_mirror(move.from_square))
-                y_move_to.append(chess.square_mirror(move.to_square))
+                y_move_from.append(fetch_from_square(chess.square_mirror(move.from_square)))
+                y_move_to.append(fetch_to_square(chess.square_mirror(move.to_square)))
         print(f"Currently parsed {len(X)} examples")
 
     return X, y_move_from, y_move_to
@@ -110,4 +110,4 @@ if __name__ == "__main__":
 
 
  X, y_move_from, y_move_to = main()
- np.savez(X, y_move_from, y_move_to)
+ np.savez("data/dataset.npz", X, y_move_from, y_move_to)
