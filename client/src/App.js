@@ -59,7 +59,7 @@ export default function PlayVsRandom({ boardWidth }) {
       <Chessboard
         id="PlayVsRandom"
         animationDuration={200}
-        boardOrientation={boardOrientation}
+        boardOrientation={'black'}
         boardWidth={412}
         customArrows={arrows}
         position={game.fen()}
