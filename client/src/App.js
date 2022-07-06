@@ -60,7 +60,7 @@ export default function PlayVsRandom({ boardWidth }) {
         id="PlayVsRandom"
         animationDuration={200}
         boardOrientation={boardOrientation}
-        boardWidth={boardWidth}
+        boardWidth={412}
         customArrows={arrows}
         position={game.fen()}
         onPieceDrop={onDrop}
@@ -111,7 +111,7 @@ export default function PlayVsRandom({ boardWidth }) {
       >
         undo
       </button>
-  
+
     </div>
   );
 }

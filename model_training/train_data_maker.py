@@ -87,7 +87,7 @@ def main():
 
     print("Starting process!")
     X, y_move_from, y_move_to = [], [], []
-    pgn = open(os.path.join("data", "ficsgamesdb_search_255149.pgn"))
+    pgn = open(os.path.join("data", "ficsgamesdb_search_255152.pgn"))
     while True:
         game = chess.pgn.read_game(pgn)
         if game is None:
