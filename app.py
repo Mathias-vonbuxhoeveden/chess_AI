@@ -7,6 +7,7 @@ import keras
 import random
 import numpy as np
 
+
 class predict_pro_move:
 
     def __init__(self):
@@ -99,7 +100,11 @@ class predict_pro_move:
         else:
             return chess.square_mirror(from_square), chess.square_mirror(to_square)
 
+model=None
+def load_model():
 
+    global model
+    model = predict_pro_move()
 
 
 app=Flask(__name__,static_folder='client/build',static_url_path='')
@@ -109,13 +114,11 @@ cors = CORS(app)
 @cross_origin()
 
 
-
-
 def members():
     try:
         data = request.json
         chess_board = chess.Board(data)
-        from_square, to_square = predict_pro_move().predict(chess_board)
+        from_square, to_square = model.predict(chess_board)
         move = chess.Move(from_square=from_square, to_square=to_square)
         computer_move = {"from": move.uci()[0:2], "to": move.uci()[2:]}
         return jsonify(computer_move)
@@ -128,5 +131,5 @@ def serve():
     return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
-
+    load_model()
     app.run(debug=True)
