@@ -116,15 +116,15 @@ load_model()
 
 
 def members():
-    #try:
-    data = request.json
-    chess_board = chess.Board(data)
-    from_square, to_square = model.predict(chess_board)
-    move = chess.Move(from_square=from_square, to_square=to_square)
-    computer_move = {"from": move.uci()[0:2], "to": move.uci()[2:]}
-    return jsonify(computer_move)
-    #except:
-        #return jsonify("c5")
+    try:
+        data = request.json
+        chess_board = chess.Board(data)
+        from_square, to_square = model.predict(chess_board)
+        move = chess.Move(from_square=from_square, to_square=to_square)
+        computer_move = {"from": move.uci()[0:2], "to": move.uci()[2:]}
+        return jsonify(computer_move)
+    except:
+        return jsonify("c5")
 
 
 @app.route('/')
