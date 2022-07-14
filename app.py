@@ -25,7 +25,6 @@ class predict_pro_move:
         queen_positions = np.zeros(64)
         king_positions = np.zeros(64)
         pawn_positions = np.zeros(64)
-        print("xxxx")
         for i in range(64):
 
             try:
@@ -67,7 +66,6 @@ class predict_pro_move:
 
         X = np.dstack([rock_positions,knight_positions,bishop_positions,queen_positions,king_positions,pawn_positions])
         X = X.reshape(1,8,8,6)
-        print(X)
         return X
 
 
@@ -76,7 +74,6 @@ class predict_pro_move:
             board_input = board.copy()
         else:
             board_input = board.mirror()
-        print(board_input)
         X = self.encode_board_data(board_input)
         piece_selector_prob = list(np.squeeze(self.piece_selector_network.predict(X)))
         move_to_probs = list(np.squeeze(self.move_to_network.predict(X)))
