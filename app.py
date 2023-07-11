@@ -3,7 +3,7 @@ from flask import jsonify
 from flask_cors import CORS, cross_origin
 import json
 import chess
-import keras
+import keras.models
 import numpy as np
 
 
