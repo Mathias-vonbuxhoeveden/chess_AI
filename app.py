@@ -2,7 +2,7 @@ from flask import Flask, send_from_directory, request
 from flask import jsonify
 from flask_cors import CORS, cross_origin
 import chess 
-import keras.models
+from keras.models import load_model
 import numpy as np
 
 
@@ -10,8 +10,8 @@ class predict_pro_move:
 
     def __init__(self):
 
-        self.move_to_network = keras.models.load_model("move_to_network")
-        self.piece_selector_network = keras.models.load_model("piece_selector_network")
+        self.move_to_network = load_model("move_to_network")
+        self.piece_selector_network = load_model("piece_selector_network")
 
     def encode_board_data(self, board):
 
