@@ -4,7 +4,6 @@ from flask_cors import CORS, cross_origin
 import json
 import chess
 import keras
-import random
 import numpy as np
 
 
