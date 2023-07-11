@@ -2,3 +2,5 @@ model_training
 .DS_Stores
 README.md
 venv
+move_to_network.variables
+piece_selector_network.variables
