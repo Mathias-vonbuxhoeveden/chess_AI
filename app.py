@@ -130,7 +130,7 @@ def serve():
     return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
-    gpu_mode = False
+    gpu_mode = True
     if gpu_mode is True:
         config = tf.ConfigProto()
         config.gpu_options.allow_growth = True
