@@ -9,7 +9,7 @@ import numpy as np
 class predict_pro_move:
 
     def __init__(self):
-        #self.move_to_network = keras.models.load_model("move_to_network")
+        self.move_to_network = keras.models.load_model("move_to_network")
         self.piece_selector_network = keras.models.load_model("piece_selector_network")
 
     def encode_board_data(self, board):
@@ -74,23 +74,23 @@ class predict_pro_move:
             board_input = board.mirror()
         X = self.encode_board_data(board_input)
         piece_selector_prob = list(np.squeeze(self.piece_selector_network.predict(X)))
-        #move_to_probs = list(np.squeeze(self.move_to_network.predict(X)))
+        move_to_probs = list(np.squeeze(self.move_to_network.predict(X)))
         legal_moves = list(board_input.legal_moves)
         from_square = legal_moves[0].from_square
 
-        #for move in legal_moves:
-            #if piece_selector_prob[move.from_square] > piece_selector_prob[from_square]:
-                #from_square = move.from_square
+        for move in legal_moves:
+            if piece_selector_prob[move.from_square] > piece_selector_prob[from_square]:
+                from_square = move.from_square
 
-        #legal_to_moves = []
-        #for move in legal_moves:
-            #if move.from_square == from_square:
-                #legal_to_moves.append(move.to_square)
+        legal_to_moves = []
+        for move in legal_moves:
+            if move.from_square == from_square:
+                legal_to_moves.append(move.to_square)
 
         to_square = legal_to_moves[0]
-        #for move in legal_to_moves:
-            #if move_to_probs[move] > move_to_probs[to_square]:
-                #to_square = move
+        for move in legal_to_moves:
+            if move_to_probs[move] > move_to_probs[to_square]:
+                to_square = move
 
         if board.turn == True:
             return from_square, to_square
