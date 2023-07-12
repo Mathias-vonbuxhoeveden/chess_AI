@@ -2,6 +2,7 @@ from flask import Flask, send_from_directory, request
 from flask import jsonify
 from flask_cors import CORS, cross_origin
 import chess 
+import tensorflow as tf
 import keras.models 
 import numpy as np
 
@@ -129,5 +130,12 @@ def serve():
     return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
+    gpu_mode = False
+    if gpu_mode is True:
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        session = tf.Session(config=config)
+    else:
+        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
     load_model()
     app.run(debug=True)
