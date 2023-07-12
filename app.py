@@ -2,7 +2,7 @@ from flask import Flask, send_from_directory, request
 from flask import jsonify
 from flask_cors import CORS, cross_origin
 import chess 
-from keras import load_model 
+from keras.models import load_model 
 import numpy as np
 
 
