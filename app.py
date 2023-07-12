@@ -1,7 +1,7 @@
 from flask import Flask, send_from_directory, request
 from flask import jsonify
 from flask_cors import CORS, cross_origin
-from chess import Board, Move
+import chess 
 from keras.models import load_model 
 import numpy as np
 
@@ -115,9 +115,9 @@ load_models()
 def members():
     try:
         data = request.json
-        chess_board = Board(data)
+        chess_board = chess.Board(data)
         from_square, to_square = model.predict(chess_board)
-        move = Move(from_square=from_square, to_square=to_square)
+        move = chess.Move(from_square=from_square, to_square=to_square)
         computer_move = {"from": move.uci()[0:2], "to": move.uci()[2:]}
         return jsonify(computer_move)
     except:
