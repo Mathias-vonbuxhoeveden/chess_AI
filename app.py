@@ -2,16 +2,15 @@ from flask import Flask, send_from_directory, request
 from flask import jsonify
 from flask_cors import CORS, cross_origin
 import chess 
-import tensorflow as tf
-import keras.models 
+from keras import load_model 
 import numpy as np
 
 
 class predict_pro_move:
 
     def __init__(self):
-        #self.move_to_network = keras.models.load_model("move_to_network")
-        self.piece_selector_network = keras.models.load_model("piece_selector_network")
+        self.move_to_network = load_model("move_to_network")
+        self.piece_selector_network = load_model("piece_selector_network")
 
     def encode_board_data(self, board):
 
@@ -74,31 +73,31 @@ class predict_pro_move:
         else:
             board_input = board.mirror()
         X = self.encode_board_data(board_input)
-        #piece_selector_prob = list(np.squeeze(self.piece_selector_network.predict(X)))
-        #move_to_probs = list(np.squeeze(self.move_to_network.predict(X)))
+        piece_selector_prob = list(np.squeeze(self.piece_selector_network.predict(X)))
+        move_to_probs = list(np.squeeze(self.move_to_network.predict(X)))
         legal_moves = list(board_input.legal_moves)
         from_square = legal_moves[0].from_square
 
-        #for move in legal_moves:
-            #if piece_selector_prob[move.from_square] > piece_selector_prob[from_square]:
-                #from_square = move.from_square
+        for move in legal_moves:
+            if piece_selector_prob[move.from_square] > piece_selector_prob[from_square]:
+                from_square = move.from_square
 
-        #legal_to_moves = []
-        #for move in legal_moves:
-            #if move.from_square == from_square:
-                #legal_to_moves.append(move.to_square)
+        legal_to_moves = []
+        for move in legal_moves:
+            if move.from_square == from_square:
+                legal_to_moves.append(move.to_square)
 
         to_square = legal_to_moves[0]
-        #for move in legal_to_moves:
-            #if move_to_probs[move] > move_to_probs[to_square]:
-                #to_square = move
+        for move in legal_to_moves:
+            if move_to_probs[move] > move_to_probs[to_square]:
+                to_square = move
 
         if board.turn == True:
             return from_square, to_square
         else:
             return chess.square_mirror(from_square), chess.square_mirror(to_square)
 
-def load_model():
+def load_models():
 
     global model
     model = predict_pro_move()
@@ -106,7 +105,7 @@ def load_model():
 
 app=Flask(__name__,static_folder='client/build',static_url_path='')
 cors = CORS(app)
-load_model()
+load_models()
 @app.route("/members", methods = ['POST'])
 @cross_origin()
 
@@ -130,12 +129,5 @@ def serve():
     return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
-    gpu_mode = True
-    if gpu_mode is True:
-        config = tf.ConfigProto()
-        config.gpu_options.allow_growth = True
-        session = tf.Session(config=config)
-    else:
-        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-    load_model()
+    load_models()
     app.run(debug=True)
