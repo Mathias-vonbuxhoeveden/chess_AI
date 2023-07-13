@@ -7,6 +7,10 @@ import numpy as np
 
 
 class predict_pro_move:
+    
+    """
+    Class for predicting professional chess-player move
+    """
 
     def __init__(self):
         self.move_to_network = load_model("move_to_network")
