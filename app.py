@@ -1,9 +1,8 @@
-from flask import Flask, send_from_directory, request
-from flask import jsonify
+from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS, cross_origin
-import chess 
+from chess import square_mirror, Board, Move
 from keras.models import load_model 
-import numpy as np
+from numpy import zeros, dstack, squeeze
 
 
 class predict_pro_move:
@@ -21,12 +20,12 @@ class predict_pro_move:
         """
         Function takes a board as input and returns an 8x8x6 array encoding of the board-position.
         """
-        rock_positions = np.zeros(64)
-        knight_positions = np.zeros(64)
-        bishop_positions = np.zeros(64)
-        queen_positions = np.zeros(64)
-        king_positions = np.zeros(64)
-        pawn_positions = np.zeros(64)
+        rock_positions = zeros(64)
+        knight_positions = zeros(64)
+        bishop_positions = zeros(64)
+        queen_positions = zeros(64)
+        king_positions = zeros(64)
+        pawn_positions = zeros(64)
         for i in range(64):
 
             try:
@@ -66,7 +65,7 @@ class predict_pro_move:
         king_positions = king_positions.reshape(8,8)
         pawn_positions = pawn_positions.reshape(8,8)
 
-        X = np.dstack([rock_positions,knight_positions,bishop_positions,queen_positions,king_positions,pawn_positions])
+        X = dstack([rock_positions,knight_positions,bishop_positions,queen_positions,king_positions,pawn_positions])
         X = X.reshape(1,8,8,6)
         return X
 
@@ -77,8 +76,8 @@ class predict_pro_move:
         else:
             board_input = board.mirror()
         X = self.encode_board_data(board_input)
-        piece_selector_prob = list(np.squeeze(self.piece_selector_network.predict(X)))
-        move_to_probs = list(np.squeeze(self.move_to_network.predict(X)))
+        piece_selector_prob = list(squeeze(self.piece_selector_network.predict(X)))
+        move_to_probs = list(squeeze(self.move_to_network.predict(X)))
         legal_moves = list(board_input.legal_moves)
         from_square = legal_moves[0].from_square
 
@@ -99,7 +98,7 @@ class predict_pro_move:
         if board.turn == True:
             return from_square, to_square
         else:
-            return chess.square_mirror(from_square), chess.square_mirror(to_square)
+            return square_mirror(from_square), square_mirror(to_square)
 
 def load_models():
 
@@ -119,9 +118,9 @@ cors = CORS(app)
 def members():
     try:
         data = request.json
-        chess_board = chess.Board(data)
+        chess_board = Board(data)
         from_square, to_square = model.predict(chess_board)
-        move = chess.Move(from_square=from_square, to_square=to_square)
+        move = Move(from_square=from_square, to_square=to_square)
         computer_move = {"from": move.uci()[0:2], "to": move.uci()[2:]}
         return jsonify(computer_move)
     except:

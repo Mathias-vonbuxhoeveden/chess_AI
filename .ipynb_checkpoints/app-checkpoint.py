@@ -1,7 +1,6 @@
-from flask import Flask, send_from_directory, request
-from flask import jsonify
+from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS, cross_origin
-import chess 
+from chess import square_mirror, Board, Move
 from keras.models import load_model 
 import numpy as np
 
@@ -99,7 +98,7 @@ class predict_pro_move:
         if board.turn == True:
             return from_square, to_square
         else:
-            return chess.square_mirror(from_square), chess.square_mirror(to_square)
+            return square_mirror(from_square), square_mirror(to_square)
 
 def load_models():
 
@@ -119,9 +118,9 @@ cors = CORS(app)
 def members():
     try:
         data = request.json
-        chess_board = chess.Board(data)
+        chess_board = Board(data)
         from_square, to_square = model.predict(chess_board)
-        move = chess.Move(from_square=from_square, to_square=to_square)
+        move = Move(from_square=from_square, to_square=to_square)
         computer_move = {"from": move.uci()[0:2], "to": move.uci()[2:]}
         return jsonify(computer_move)
     except:
