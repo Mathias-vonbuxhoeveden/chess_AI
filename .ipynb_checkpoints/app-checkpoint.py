@@ -108,8 +108,8 @@ def load_models():
 
 
 app=Flask(__name__,static_folder='client/build',static_url_path='')
-cors = CORS(app)
 load_models()
+cors = CORS(app)
 @app.route("/members", methods = ['POST'])
 @cross_origin()
 
