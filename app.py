@@ -13,8 +13,8 @@ class predict_pro_move:
     """
 
     def __init__(self):
-        self.move_to_network = load_model("move_to_network")
-        self.piece_selector_network = load_model("piece_selector_network")
+        self.move_to_network = load_model("move_to_network.h5")
+        self.piece_selector_network = load_model("piece_selector_network.h5")
 
     def encode_board_data(self, board):
 
