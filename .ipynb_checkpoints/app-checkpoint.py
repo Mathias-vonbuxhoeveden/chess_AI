@@ -2,7 +2,7 @@ from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS, cross_origin
 from chess import square_mirror, Board, Move
 from keras.models import load_model 
-import numpy as np
+from numpy import zeros, dstack, squeeze
 
 
 class predict_pro_move:
@@ -20,12 +20,12 @@ class predict_pro_move:
         """
         Function takes a board as input and returns an 8x8x6 array encoding of the board-position.
         """
-        rock_positions = np.zeros(64)
-        knight_positions = np.zeros(64)
-        bishop_positions = np.zeros(64)
-        queen_positions = np.zeros(64)
-        king_positions = np.zeros(64)
-        pawn_positions = np.zeros(64)
+        rock_positions = zeros(64)
+        knight_positions = zeros(64)
+        bishop_positions = zeros(64)
+        queen_positions = zeros(64)
+        king_positions = zeros(64)
+        pawn_positions = zeros(64)
         for i in range(64):
 
             try:
@@ -65,19 +65,18 @@ class predict_pro_move:
         king_positions = king_positions.reshape(8,8)
         pawn_positions = pawn_positions.reshape(8,8)
 
-        X = np.dstack([rock_positions,knight_positions,bishop_positions,queen_positions,king_positions,pawn_positions])
+        X = dstack([rock_positions,knight_positions,bishop_positions,queen_positions,king_positions,pawn_positions])
         X = X.reshape(1,8,8,6)
         return X
 
 
     def predict(self, board):
         if board.turn == True:
-            board_input = board.copy()
+            X = self.encode_board_data(board)
         else:
-            board_input = board.mirror()
-        X = self.encode_board_data(board_input)
-        piece_selector_prob = list(np.squeeze(self.piece_selector_network.predict(X)))
-        move_to_probs = list(np.squeeze(self.move_to_network.predict(X)))
+            X = self.encode_board_data(board.mirror()) 
+        piece_selector_prob = list(squeeze(self.piece_selector_network.predict(X)))
+        move_to_probs = list(squeeze(self.move_to_network.predict(X)))
         legal_moves = list(board_input.legal_moves)
         from_square = legal_moves[0].from_square
 
