@@ -60,14 +60,7 @@ class PredictProMove:
 
                 pass
 
-        rock_positions = rock_positions.reshape(8,8)
-        knight_positions = knight_positions.reshape(8,8)
-        bishop_positions = bishop_positions.reshape(8,8)
-        queen_positions = queen_positions.reshape(8,8)
-        king_positions = king_positions.reshape(8,8)
-        pawn_positions = pawn_positions.reshape(8,8)
-
-        return dstack([rock_positions,knight_positions,bishop_positions,queen_positions,king_positions,pawn_positions]).reshape(1,8,8,6)
+        return dstack([rock_positions.reshape(8,8),knight_positions.reshape(8,8),bishop_positions.reshape(8,8),queen_positions.reshape(8,8),king_positions.reshape(8,8),pawn_positions.reshape(8,8)]).reshape(1,8,8,6)
         
         
     def predict(self, board):
