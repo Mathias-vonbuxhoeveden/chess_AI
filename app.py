@@ -5,13 +5,18 @@ from keras.models import load_model
 from numpy import zeros, dstack, squeeze
 
 
-class predict_pro_move:
+class PredictProMove:
     
     """
     Class for predicting professional chess-player move
     """
 
     def __init__(self):
+        
+        pass
+    
+    def load_models(self):
+        
         self.move_to_network = load_model("move_to_network.h5")
         self.piece_selector_network = load_model("piece_selector_network.h5")
 
@@ -99,13 +104,12 @@ class predict_pro_move:
             return square_mirror(from_square), square_mirror(to_square)
 
 def load_models():
-
     global model
-    model = predict_pro_move()
+    model = PredictProMove()
+    model.load_models()
 
 
 app=Flask(__name__,static_folder='client/build',static_url_path='')
-load_models()
 cors = CORS(app)
 @app.route("/members", methods = ['POST'])
 @cross_origin()
@@ -127,4 +131,5 @@ def serve():
     return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
+    load_models()
     app.run(debug=True)
