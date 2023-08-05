@@ -4,6 +4,9 @@ from chess import square_mirror, Board, Move
 from keras.models import load_model 
 from numpy import zeros, dstack, squeeze
 
+app=Flask(__name__,static_folder='client/build',static_url_path='')
+cors = CORS(app)
+
 
 class PredictProMove:
     
@@ -11,6 +14,10 @@ class PredictProMove:
     Class for predicting professional chess-player move
     """   
     def __init__(self):
+        
+        pass
+    
+    def load_model(self):
         
         self.move_to_network = load_model("move_to_network.h5")
         self.piece_selector_network = load_model("piece_selector_network.h5")
@@ -98,14 +105,10 @@ class PredictProMove:
         else:
             return square_mirror(from_square), square_mirror(to_square)
 
-def load_models():
-    global model
-    model = PredictProMove()
+model = PredictProMove()
+model.load_model()
 
 
-
-app=Flask(__name__,static_folder='client/build',static_url_path='')
-cors = CORS(app)
 @app.route("/members", methods = ['POST'])
 @cross_origin()
 
@@ -126,5 +129,4 @@ def serve():
     return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
-    load_models()
     app.run(debug=True)
