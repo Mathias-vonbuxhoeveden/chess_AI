@@ -70,13 +70,13 @@ class predict_pro_move:
         
     def predict(self, board):
         if board.turn == True:
-            pass 
+            board_input = board.copy() 
         else:
-            board = board.mirror()
-        X = self.encode_board_data(board)
+            board_input = board.mirror()
+        X = self.encode_board_data(board_input)
         piece_selector_prob = list(squeeze(self.piece_selector_network.predict(X)))
         move_to_probs = list(squeeze(self.move_to_network.predict(X)))
-        legal_moves = list(board.legal_moves)
+        legal_moves = list(board_input.legal_moves)
         from_square = legal_moves[0].from_square
 
         for move in legal_moves:
