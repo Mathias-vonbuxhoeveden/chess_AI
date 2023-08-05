@@ -4,8 +4,7 @@ from chess import square_mirror, Board, Move
 from keras.models import load_model 
 from numpy import zeros, dstack, squeeze
 
-app=Flask(__name__,static_folder='client/build',static_url_path='')
-cors = CORS(app)
+
 
 
 class PredictProMove:
@@ -15,13 +14,9 @@ class PredictProMove:
     """   
     def __init__(self):
         
-        pass
-    
-    def load_model(self):
-        
         self.move_to_network = load_model("move_to_network.h5")
         self.piece_selector_network = load_model("piece_selector_network.h5")
-
+    
     def encode_board_data(self, board):
 
         """
@@ -105,12 +100,18 @@ class PredictProMove:
         else:
             return square_mirror(from_square), square_mirror(to_square)
 
-model = PredictProMove()
-model.load_model()
+def load_models():
+
+    global model
+    model = PredictProMove()
 
 
+app=Flask(__name__,static_folder='client/build',static_url_path='')
+load_models()
+cors = CORS(app)
 @app.route("/members", methods = ['POST'])
 @cross_origin()
+
 
 
 
@@ -118,7 +119,8 @@ def members():
     try:
         from_square, to_square = model.predict(Board(request.json))
         move = Move(from_square=from_square, to_square=to_square)
-        return jsonify({"from": move.uci()[0:2], "to": move.uci()[2:]})
+        computer_move = {"from": move.uci()[0:2], "to": move.uci()[2:]}
+        return jsonify(computer_move)
     except:
         return jsonify("c5")
 
