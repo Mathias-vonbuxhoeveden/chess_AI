@@ -27,12 +27,12 @@ class PredictProMove:
         """
         Function takes a board as input and returns an 8x8x6 array encoding of the board-position.
         """
-        rock_positions = zeros(64)
-        knight_positions = zeros(64)
-        bishop_positions = zeros(64)
-        queen_positions = zeros(64)
-        king_positions = zeros(64)
-        pawn_positions = zeros(64)
+        rock_positions = zeros(64, dtype=int)
+        knight_positions = zeros(64, dtype=int)
+        bishop_positions = zeros(64, dtype=int)
+        queen_positions = zeros(64, dtype=int)
+        king_positions = zeros(64, dtype=int)
+        pawn_positions = zeros(64, dtype=int)
         for i in range(64):
 
             try:
