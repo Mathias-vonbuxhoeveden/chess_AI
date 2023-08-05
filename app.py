@@ -112,8 +112,7 @@ def members():
     try:
         from_square, to_square = model.predict(Board(request.json))
         move = Move(from_square=from_square, to_square=to_square)
-        computer_move = {"from": move.uci()[0:2], "to": move.uci()[2:]}
-        return jsonify(computer_move)
+        return jsonify({"from": move.uci()[0:2], "to": move.uci()[2:]})
     except:
         return jsonify("c5")
 
