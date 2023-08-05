@@ -115,8 +115,7 @@ cors = CORS(app)
 
 def members():
     try:
-        chess_board = Board(request.json)
-        from_square, to_square = model.predict(chess_board)
+        from_square, to_square = model.predict(Board(request.json))
         move = Move(from_square=from_square, to_square=to_square)
         return jsonify({"from": move.uci()[0:2], "to": move.uci()[2:]})
     except:
