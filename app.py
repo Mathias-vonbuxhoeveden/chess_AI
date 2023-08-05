@@ -65,17 +65,15 @@ class predict_pro_move:
         king_positions = king_positions.reshape(8,8)
         pawn_positions = pawn_positions.reshape(8,8)
 
-        X = dstack([rock_positions,knight_positions,bishop_positions,queen_positions,king_positions,pawn_positions])
-        X = X.reshape(1,8,8,6)
-        return X
-
-
+        return dstack([rock_positions,knight_positions,bishop_positions,queen_positions,king_positions,pawn_positions]).reshape(1,8,8,6)
+        
+        
     def predict(self, board):
         if board.turn == True:
-            board_input = board.copy()
+            pass 
         else:
-            board_input = board.mirror()
-        X = self.encode_board_data(board_input)
+            board = board.mirror()
+        X = self.encode_board_data(board)
         piece_selector_prob = list(squeeze(self.piece_selector_network.predict(X)))
         move_to_probs = list(squeeze(self.move_to_network.predict(X)))
         legal_moves = list(board_input.legal_moves)
@@ -117,12 +115,10 @@ cors = CORS(app)
 
 def members():
     try:
-        data = request.json
-        chess_board = Board(data)
+        chess_board = Board(request.json)
         from_square, to_square = model.predict(chess_board)
         move = Move(from_square=from_square, to_square=to_square)
-        computer_move = {"from": move.uci()[0:2], "to": move.uci()[2:]}
-        return jsonify(computer_move)
+        return jsonify({"from": move.uci()[0:2], "to": move.uci()[2:]})
     except:
         return jsonify("c5")
 
