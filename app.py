@@ -110,7 +110,6 @@ model.load_model()
 
 
 @app.route("/members", methods = ['POST'])
-@cross_origin()
 
 
 
