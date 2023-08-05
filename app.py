@@ -15,7 +15,7 @@ class PredictProMove:
         
         pass
     
-    def load_models(self):
+    def load_networks(self):
         
         self.move_to_network = load_model("move_to_network.h5")
         self.piece_selector_network = load_model("piece_selector_network.h5")
@@ -106,7 +106,7 @@ class PredictProMove:
 def load_models():
     global model
     model = PredictProMove()
-    model.load_models()
+    model.load_networks()
 
 
 app=Flask(__name__,static_folder='client/build',static_url_path='')
